@@ -2,11 +2,28 @@ const url = '/User';
 let token = localStorage.getItem("token");
 const btnAdmin = document.querySelector('#admin');
 
+// function getUsers() {
+//     fetch(`${url}/Get`)
+//         .then(response => response.json())
+//         .then(data => _displayUsers(data))
+//         .catch(_error => console.log(alert('you dont have authorize')));
+// }
+
 function getUsers() {
-    fetch(url)
+    console.log("in getalluser");
+    fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        })
         .then(response => response.json())
-        .then(data => _displayUsers(data))
-        .catch(_error => console.log(alert('you dont have authorize')));
+        .then(data => {
+            _displayUsers(data);
+        })
+        .catch(_error => alert('you dont have authorize'));
 }
 
 
@@ -25,20 +42,20 @@ function _displayUsers(data) {
 
         let editButton = button.cloneNode(false);
         editButton.innerText = 'Edit';
-        editButton.setAttribute('onclick', `displayEditForm(${user.Id})`);
+        editButton.setAttribute('onclick', `displayEditForm(${user.id})`);
 
         let deleteButton = button.cloneNode(false);
         deleteButton.innerText = '❌';
-        deleteButton.setAttribute('onclick', `deleteUser(${user.Id})`);
+        deleteButton.setAttribute('onclick', `deleteUser(${user.id})`);
 
         let tr = tBody.insertRow();
 
         let td1 = tr.insertCell(0);
-        let textNode1 = document.createTextNode(user.Id);
+        let textNode1 = document.createTextNode(user.id);
         td1.appendChild(textNode1);
 
         let td2 = tr.insertCell(1);
-        let textNode2 = document.createTextNode(user.Name);
+        let textNode2 = document.createTextNode(user.name);
         td2.appendChild(textNode2);
 
         let td3 = tr.insertCell(2);
@@ -74,10 +91,10 @@ function addUser() {
     const addNameTextbox = document.getElementById('add-user-name');
     const addPasswordTextbox = document.getElementById('add-password');
     const user = {
-        userName: addNameTextbox.value.trim(),
+        name: addNameTextbox.value.trim(),
         password: addPasswordTextbox.value.trim(),
     };
-    fetch(`${uri}`, {
+    fetch(`${url}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
