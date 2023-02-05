@@ -16,6 +16,6 @@ namespace Tasks.Interfaces
         bool isExist(string name, string password);
         int findId(string name, string password);
         // void Update(User user);
-        int Count {get;}
+        int CountUsers{get;}
     }
 }

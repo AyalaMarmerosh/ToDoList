@@ -31,7 +31,7 @@ namespace Tasks.Controllers
             var claims = new List<Claim>();
 
             if(user.Name!="ayala"
-            || user.password!="8520741")
+            || user.password!="85")
             {
                 if (UserService.isExist(user.Name, user.password))
                 {
@@ -89,7 +89,7 @@ namespace Tasks.Controllers
             if (user == null)
                 return NotFound();
             UserService.Delete(id);
-            return Content(UserService.Count.ToString());
+            return Content(UserService.CountUsers.ToString());
         }
     }
 }

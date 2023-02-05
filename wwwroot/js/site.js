@@ -77,7 +77,6 @@ function addUser() {
         userName: addNameTextbox.value.trim(),
         password: addPasswordTextbox.value.trim(),
     };
-    debugger
     fetch(`${uri}`, {
         method: 'POST',
         headers: {
@@ -102,7 +101,6 @@ let tasks = [];
 
 
 // function getItems() {
-//     debugger
 //     getUserName();
     
 //     fetch(uri, {
@@ -118,17 +116,28 @@ let tasks = [];
 //         .catch(error => alert('Unable to get items.', error));
 // }
 function getItems() {
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${token}`);
-    myHeaders.append("Content-Type", "application/json");
+    // var myHeaders = new Headers();
+    // myHeaders.append("Authorization", `Bearer ${token}`);
+    // myHeaders.append("Content-Type", "application/json");
   
-    var requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-    debugger;
-    fetch(uri, requestOptions)
+    // var requestOptions = {
+    //   method: "GET",
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json',
+    //     'Authorization': 'Bearer'+ token
+    //   }
+    // };
+
+    console.log('the token is'+ token);
+    fetch(uri, {
+        method: "GET",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    })
       .then((response) => response.json())
       .then((data) => _displayItems(data))
       .catch((error) => alert("Unable to get items... \n" + error));
@@ -136,7 +145,7 @@ function getItems() {
 
 
 function addItem() {
-    debugger
+
     const addNameTextbox = document.getElementById('add-name');
     const item = {
         perform: false,
@@ -172,22 +181,31 @@ function deleteItem(id) {
         .catch(error => console.log('Unable to delete item.', error));
 }
 
+// function displayEditForm(id) {
+
+//     const item = tasks.find(item => item.id === id);
+
+//     document.getElementById('edit-name').value = item.name;
+//     document.getElementById('edit-id').value = item.id;
+//     document.getElementById('edit-perform').checked = item.perform;
+//     document.getElementById('save').style.display = 'block';
+// }
+
 function displayEditForm(id) {
+    const item =tasks.find(item => item.id === id);
 
-    const item = tasks.find(item => item.Id === id);
-
-    document.getElementById('edit-name').value = item.Name;
-    document.getElementById('edit-id').value = item.Id;
-    document.getElementById('edit-perform').checked = item.perform;
-    document.getElementById('Save').style.display = 'block';
+    document.getElementById('edit-name').value = item.name;
+    document.getElementById('edit-id').value = item.id;
+    document.getElementById('edit-perform').checked = item.IsDoing;
+    document.getElementById('editForm').style.display = 'block';
 }
 
 function updateItem() {
     const itemId = document.getElementById('edit-id').value;
     const item = {
-        Id: parseInt(itemId, 10),
+        id: parseInt(itemId, 10),
         perform: document.getElementById('edit-perform').checked,
-        Name: document.getElementById('edit-name').value.trim()
+        name: document.getElementById('edit-name').value.trim()
     };
 
     fetch(`${uri}/${itemId}`, {
@@ -208,7 +226,7 @@ function updateItem() {
 }
 
 function closeInput() {
-    document.getElementById('Sava').style.display = 'none';
+    document.getElementById('editForm').style.display = 'none';
 }
 
 function _displayCount(itemCount) {
@@ -233,11 +251,11 @@ function _displayItems(data) {
 
         let editButton = button.cloneNode(false);
         editButton.innerText = "Edit";
-        editButton.setAttribute('onclick', `displayEditForm(${item.Id})`);
+        editButton.setAttribute('onclick', `displayEditForm(${item.id})`);
 
         let deleteButton = button.cloneNode(false);
         deleteButton.innerText = 'Delete';
-        deleteButton.setAttribute('onclick', `deleteItem(${item.Id})`);
+        deleteButton.setAttribute('onclick', `deleteItem(${item.id})`);
 
         let tr = tBody.insertRow();
 
@@ -258,22 +276,22 @@ function _displayItems(data) {
     tasks = data;
 }
 
-const deleteTaskIsDone = document.getElementById('deleteTaskIsDone');
-deleteTaskIsDone.onclick = () => {
-    fetch(uri, {
-        method: 'DELETE',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-    })
-        .then(() => {
-            getItems();
-            alert("the task is Doen deleted");
-        })
-        .catch(error => console.log('Unable to delete item.', error));
-}
+// const deleteTaskIsDone = document.getElementById('deleteTaskIsDone');
+// deleteTaskIsDone.onclick = () => {
+//     fetch(uri, {
+//         method: 'DELETE',
+//         headers: {
+//             'Accept': 'application/json',
+//             'Content-Type': 'application/json',
+//             'Authorization': 'Bearer ' + token
+//         },
+//     })
+//         .then(() => {
+//             getItems();
+//             alert("the task is Doen deleted");
+//         })
+//         .catch(error => console.log('Unable to delete item.', error));
+// }
 
 function getUserName() {
     const name = document.getElementById('userName');

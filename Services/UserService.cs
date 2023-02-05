@@ -45,7 +45,7 @@ namespace Tasks.Services
 
         public void Add(User user)
         {
-            user.Id = Count;
+            user.Id = counter++;
             Users.Add(user);
             saveToFile();
         }
@@ -82,6 +82,6 @@ namespace Tasks.Services
             var idUser = Users.FirstOrDefault(u => u.Name.Equals(name) && u.password.Equals(password));
             return idUser.Id;
         }
-        public int Count => counter++;
+        public int CountUsers => Users.Count();
     }
 }

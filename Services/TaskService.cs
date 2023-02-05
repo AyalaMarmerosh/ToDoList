@@ -13,16 +13,16 @@ namespace Tasks.Services{
         List<User> MyUsers {get; }
 
         private User currentUser {get; set;}
-        static int counter = 0;
-        private static string fileName = "Task.json";
+        static int counterUser = 1;
+        static int counterTasks = 1;
+        private static string fileName = "task.json";
         private static string fileNameUser = "user.json";
-        private string filePath;
+        // private string filePath;
         private IWebHostEnvironment webHost;
-        public TaskService(IWebHostEnvironment webHost)
+        public TaskService(/*IWebHostEnvironment webHost*/)
         {
-            this.webHost=webHost;
-            filePath=Path.Combine(webHost.ContentRootPath, "task.json");
-            using (var jsonFile = File.OpenText(filePath))
+            // filePath=Path.Combine(webHost.ContentRootPath, "task.json");
+            using (var jsonFile = File.OpenText(fileName))
             {
                 Tasks = JsonSerializer.Deserialize<List<Task>>(jsonFile.ReadToEnd(),
                 new JsonSerializerOptions
@@ -30,12 +30,20 @@ namespace Tasks.Services{
                     PropertyNameCaseInsensitive = true
                 });
             }
-            if(MyUsers.Count>0){
-                counter = MyUsers[MyUsers.Count-1].Id+1;
-           }
-            if (Tasks.Count() > 0)
+            using (var jsonFile = File.OpenText(fileNameUser))
             {
-                counter = Tasks[Tasks.Count() - 1].Id + 1;
+                MyUsers = JsonSerializer.Deserialize<List<User>>(jsonFile.ReadToEnd(),
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            if(MyUsers.Count>0){
+                counterUser = MyUsers[MyUsers.Count-1].Id+1;
+           }
+            if (Tasks.Count > 0)
+            {
+                counterTasks = Tasks[Tasks.Count() - 1].Id + 1;
             }
         }
         public string Login(User user)
@@ -51,19 +59,23 @@ namespace Tasks.Services{
         }
         private void saveToFile()
         {
-            File.WriteAllText(filePath, JsonSerializer.Serialize(Tasks));
+            File.WriteAllText(fileName, JsonSerializer.Serialize(Tasks));
         }
         private void SaveUsersToFile()
         {
             File.WriteAllText(fileNameUser, JsonSerializer.Serialize(MyUsers));
         }
-        public List<Task> GetAll(int id) =>  Tasks.Where(t => t.userId == currentUser.Id)?.ToList();
-         public Task Get(int id) => Tasks.FirstOrDefault(p => p.Id == id && p.Id == currentUser.Id);
+        public List<Task> GetAll() =>  Tasks.Where(t => t.userId == currentUser.Id)?.ToList();
+         public Task Get(int id) => Tasks.FirstOrDefault(
+            p =>{
+          return p.Id == id && p.userId == currentUser.Id;
+            } 
+            );
 
         public void Add(Task task)
         {
-            task.Id = Count;
-            task.Id = currentUser.Id;
+            task.Id = counterTasks++;
+            task.userId = currentUser.Id;
             Tasks.Add(task);
             saveToFile();
         }
@@ -81,10 +93,49 @@ namespace Tasks.Services{
             var index = Tasks.FindIndex(t => t.Id == task.Id);
             if (index == -1)
                 return;
+            task.userId =  Tasks[index].userId;
             Tasks[index] = task;
             saveToFile();
         }
 
-        public int Count => counter++;
+        public int Count => Tasks.Count();
+        // public int CountUsers => MyUsers.Count();
+
+        //Get all users
+        public List<User> GetAllUsers()
+        {
+            return MyUsers;
+        }
+        public User GetUser(int id) => MyUsers.FirstOrDefault(u => u.Id == id);
+        public User GetCurrentUser() => currentUser; 
+         //post user
+      public User AddUser(User user)
+        {
+            user.Id = counterUser++;
+            MyUsers.Add(user);
+            SaveUsersToFile();
+            return user;
+        }
+
+
+        //Delete user
+        public void DeleteUser(int id)
+        {
+            User user = GetUser(id);
+            if(user != null)
+            {
+                foreach (Task task in Tasks.ToList())
+                {
+                    if(task.Id == id)
+                    {
+                        Tasks.Remove(task);
+                    }
+                }
+                MyUsers.Remove(user);
+            }
+            saveToFile();
+            SaveUsersToFile();
+        }
+
     }
 }

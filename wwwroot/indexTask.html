@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>my tasks</title>
-    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="site.css" />
 </head>
 <body>
     <h1>my Tasks</h1>
@@ -15,11 +16,20 @@
         <input type="text" id="add-name" placeholder="New task">
         <input type="submit" value="Add">
     </form>
-    <div>
+    <!-- <div>
         <button id="deleteTaskIsDone">delete the task is done</button>
-    </div>
-    <div id="editForm">
+    </div> -->
+    <!-- <div id="editForm">
         <h3>Edit</h3>
+        <form action="javascript:void(0);" onsubmit="updateItem()">
+            <input type="hidden" id="edit-id">
+            <input type="checkbox" id="edit-perform">
+            <input type="text" id="edit-name">
+            <input type="submit" value="save" id ="save">
+            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
+        </form>
+    </div> -->
+    <div id="editForm">
         <form action="javascript:void(0);" onsubmit="updateItem()">
             <input type="hidden" id="edit-id">
             <input type="checkbox" id="edit-perform">
@@ -41,17 +51,16 @@
         <tbody id="tasks"></tbody>
     </table>
 
-    <p>-------------users-------------</p>
-    <button id="admin">to show all users</button>
+
 
     <div id="manager">
+        <p>-------------users-------------</p>
+        <button id="admin">to show all users</button>
         <form action="javascript:void(0);" method="POST" onsubmit="addUser()">
             <input type="text" id="add-user-name" placeholder="enter new user">
             <input type="password" id="add-password" placeholder="enter new password">
             <input type="submit" value="Add">
         </form>
-
-
         <h3>
             <b id="countUser"></b>
         </h3>

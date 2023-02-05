@@ -13,7 +13,7 @@ namespace Tasks.Controllers
     public class TaskController : ControllerBase
     {
         private ITaskService TaskService;
-        private int userId = 85;
+        private int userId;
         private string userName;
         public TaskController(ITaskService taskService, IHttpContextAccessor httpContextAccessor)
         {
@@ -27,10 +27,8 @@ namespace Tasks.Controllers
         [Authorize(Policy="User")]
         public ActionResult<List<Task>> Get()
         {
-            return TaskService.GetAll(userId);
+            return TaskService.GetAll();
         }
-
-
         [HttpGet("{id}")]//get לפי id מסוים
         [Authorize(Policy = "User")]
         public ActionResult<Task> Get(int id)
@@ -42,7 +40,6 @@ namespace Tasks.Controllers
         }
 
         [HttpPost] 
-        
         public ActionResult Post(Task task)
         {
             TaskService.Add(task);
@@ -66,7 +63,7 @@ namespace Tasks.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "User")]
+        // [Authorize(Policy = "User")]
         public ActionResult Delete(int id)
         {
             var task = TaskService.Get(id);
